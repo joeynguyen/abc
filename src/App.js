@@ -2,37 +2,51 @@ import React, { useCallback, useState, useEffect } from 'react';
 import './App.css';
 
 export default function App() {
-  const keyPressed = useKeyPress();
+  const [keysPressed, ] = useKeysPressed();
+  console.log("keysPressed", keysPressed);
+
   // const modifierKeys = ["Alt", "Shift", "Meta", "Control"]
-  // const ignoredKeys = ["Escape"]
-  const acceptedKeysRegex = /[A-Za-z0-9]/; // only English alphabets and numbers
+  const alphaNumericRegex = /[A-Za-z0-9]/; // only English alphabets and numbers
 
-  const coords = getCoordinates();
-
-  return (
-    <div
-      className="char"
-      style={{
-        top: coords.top,
-        left: coords.left,
-      }}>
-      {
-        keyPressed.length === 1 && acceptedKeysRegex.test(keyPressed)
-          ? keyPressed
-          : ''
-      }
-    </div>
-  );
+  return keysPressed.map((keyItem, idx) => {
+    return (
+      <div
+        key={`${keyItem.value}${idx}`}
+        className="char"
+        style={{
+          top: keyItem.top,
+          left: keyItem.left,
+        }}>
+        {
+          keyItem.value.length === 1 && alphaNumericRegex.test(keyItem.value)
+            ? keyItem.value
+            : '*'
+        }
+      </div>
+    );
+  });
 }
 
-function useKeyPress() {
+function useKeysPressed() {
   // State for keeping track of whether key is pressed
-  const [keyPressed, setKeyPressed] = useState('');
+  const [keysPressed, setKeysPressed] = useState([]);
 
-  // If pressed key is our target key then set to true
   const downHandler = useCallback(({ key }) => {
-    setKeyPressed(key);
-  }, []);
+    const coords = getCoordinates();
+    console.log("key", key);
+    const keyItem = {
+      value: key,
+      top: coords.top,
+      left: coords.left,
+    }
+    if (keysPressed.length === 5) {
+      setKeysPressed([...keysPressed.slice(1), keyItem]);
+    } else {
+      setKeysPressed([...keysPressed, keyItem]);
+    }
+
+  }, [keysPressed]);
+  console.log("keysPressed", keysPressed);
 
   // Add event listeners
   useEffect(() => {
@@ -41,9 +55,9 @@ function useKeyPress() {
     return () => {
       window.removeEventListener('keydown', downHandler);
     };
-  }, [downHandler]); // Empty array ensures that effect is only run on mount and unmount
+  }, [downHandler]);
 
-  return keyPressed;
+  return [keysPressed, setKeysPressed];
 }
 
 function getRandomInt(min, max) {
