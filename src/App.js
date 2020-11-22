@@ -1,16 +1,18 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { randomColor } from './helpers';
+import createLinkTag from './createLinkTag';
 import './App.css';
 
 export default function App() {
   const [keysPressed, ] = useKeysPressed();
   console.log("keysPressed", keysPressed);
+  createLinkTag('https://fonts.googleapis.com/css2?family=Henny+Penny&display=swap');
 
   // const modifierKeys = ["Alt", "Shift", "Meta", "Control"]
   const alphaNumericRegex = /[A-Za-z0-9]/; // only English alphabets and numbers
 
   return (
-    <div className="app">
+    <div className="app henny-penny">
       {keysPressed.map((keyItem, idx) => {
         return (
           <div
