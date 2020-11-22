@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
+import { randomColor } from './helpers';
 import './App.css';
 
 export default function App() {
@@ -8,23 +9,28 @@ export default function App() {
   // const modifierKeys = ["Alt", "Shift", "Meta", "Control"]
   const alphaNumericRegex = /[A-Za-z0-9]/; // only English alphabets and numbers
 
-  return keysPressed.map((keyItem, idx) => {
-    return (
-      <div
-        key={`${keyItem.value}${idx}`}
-        className="char"
-        style={{
-          top: keyItem.top,
-          left: keyItem.left,
-        }}>
-        {
-          keyItem.value.length === 1 && alphaNumericRegex.test(keyItem.value)
-            ? keyItem.value
-            : '*'
-        }
-      </div>
-    );
-  });
+  return (
+    <div className="app">
+      {keysPressed.map((keyItem, idx) => {
+        return (
+          <div
+            key={`${keyItem.value}${idx}`}
+            className="char"
+            style={{
+              color: keyItem.color,
+              top: keyItem.top,
+              left: keyItem.left,
+            }}>
+            {
+              keyItem.value.length === 1 && alphaNumericRegex.test(keyItem.value)
+                ? keyItem.value
+                : '*'
+            }
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 function useKeysPressed() {
@@ -38,6 +44,7 @@ function useKeysPressed() {
       value: key,
       top: coords.top,
       left: coords.left,
+      color: randomColor(),
     }
     if (keysPressed.length === 5) {
       setKeysPressed([...keysPressed.slice(1), keyItem]);
